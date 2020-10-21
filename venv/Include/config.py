@@ -3,7 +3,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 bot_token = '1341484374:AAEinrSedgSw0YWffZkhXnzaUloMUR-eriw'
-req_url = 'http://194.67.111.246:8000'
+req_url = 'http://194.67.111.246/api/v1'
 
 storage = MemoryStorage()
 bot = Bot(token=bot_token)

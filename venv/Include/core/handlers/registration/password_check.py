@@ -10,7 +10,10 @@ async def food_step_2(message: types.Message, state: FSMContext):  # обрат�
     async with state.proxy() as data:
         user_pass = message.text
         json_data = requests.post(
-            req_url + "/check_password?password=" + str(user_pass) + "&telid=" + str(message.from_user.id)).json()
+            req_url + "/user/check_password?password=" + str(user_pass) + "&telid=" + str(message.from_user.id))
+        print(json_data)
+        print(req_url + "/user/check_password?password=" + str(user_pass) + "&telid=" + str(message.from_user.id))
+        json_data = json_data.json()
         id = json_data['id']
         token = json_data['token']
         new_token = {
