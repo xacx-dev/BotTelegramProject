@@ -2,23 +2,20 @@ from aiogram import types
 from config import dp,bot,req_url
 from aiogram.dispatcher import FSMContext
 from Include.core.states import Registration
-from Include.models import tokens
-import requests
+from .messages import *
+from Include.core.helpers import requestsApi
+from .CheckRegData import *
 
 @dp.message_handler(state=Registration.REG_PASS, content_types=types.ContentTypes.TEXT)
-async def food_step_2(message: types.Message, state: FSMContext):  # обратите внимание, есть второй аргумент
+async def auth(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        user_pass = message.text
-        json_data = requests.post(
-            req_url + "/user/check_password?password=" + str(user_pass) + "&telid=" + str(message.from_user.id))
-        print(json_data)
-        print(req_url + "/user/check_password?password=" + str(user_pass) + "&telid=" + str(message.from_user.id))
-        json_data = json_data.json()
-        id = json_data['id']
-        token = json_data['token']
-        new_token = {
-            "idinmain": id,
-            "telegramid": message.from_user.id,
-            "token": token
-        }
-        await tokens.create(**new_token)
+        check_user_bd =requestsApi.check_pass(message.text,message.from_user.id)
+        print(check_user_bd)
+        if not (check_user_bd['token'] and check_user_bd['id']):
+            auth_req = requestsApi.gettoken(message.from_user.id)
+            if not (auth_req['token'] and auth_req['id']):
+                await bot.send_message(message.from_user.id, bad_password)
+        else:
+            if await state_reg(message.from_user.id, data):
+                print('good')
+
