@@ -30,8 +30,15 @@ def create_inline_markup(*btns_data: tuple, row_width=2) -> types.InlineKeyboard
             }
             btns.append(data)
 
-
+    btns = btns
     keyboard_markup = types.InlineKeyboardMarkup(row_width=row_width)
     keyboard_markup.add(*btns)
+    return keyboard_markup
+
+def create_inline_markup_hard(*buttons_data: tuple, row_width=2) -> types.InlineKeyboardMarkup:
+    buttons = (types.InlineKeyboardButton(text, callback_data=callback) for text, callback in buttons_data)
+
+    keyboard_markup = types.InlineKeyboardMarkup(row_width=row_width)
+    keyboard_markup.add(*buttons)
 
     return keyboard_markup

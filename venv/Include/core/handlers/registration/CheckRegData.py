@@ -1,5 +1,5 @@
 from aiogram import types
-from config import bot
+from config import bot,dp
 from Include.core.states import Registration
 from .messages import *
 from aiogram.dispatcher import FSMContext
@@ -10,8 +10,7 @@ import re
 import json
 
 async def state_reg(usertgid,data):
-    token = requestsApi.gettoken(usertgid)
-    userData = requestsApi.getuser(token['id'])
+    userData = requestsApi.getUserData(usertgid)
     print(userData)
     if userData['last_name'] == "awaiting":
         await Registration.REG_LASTNAME.set()
@@ -33,7 +32,7 @@ async def state_reg(usertgid,data):
         groups_list.append(("Наставник", "fond_mentor"))
         groups_list.append(("Сооснователь Фонда", "fond_cofounder"))
         groups_list.append(("Команда Фонда", "fond_team"))
-        btns = tg_helper.create_inline_markup(*reversed(groups_list),row_width=1)
+        btns = tg_helper.create_inline_markup(*groups_list,row_width=1)
         await bot.send_message(usertgid, group_text, reply_markup=btns)
         return
     elif userData['city'] == "awaiting":
@@ -43,7 +42,7 @@ async def state_reg(usertgid,data):
         await bot.send_message(usertgid, city_where, reply_markup=btns)
 
         return
-    elif str(userData['created_at']).split("T")[0] == userData['startdate']:
+    elif "1970-01-01" == userData['startdate']:
         await Registration.REG_YEARENTER.set()
         btns = await get_btns_param(userData,"year")
         await bot.send_message(usertgid, year_join, reply_markup=btns)
@@ -65,7 +64,7 @@ async def state_reg(usertgid,data):
         await Registration.REG_TEL.set()
         await bot.send_message(usertgid, telnum_text)
         return
-    elif str(userData['created_at']).split("T")[0] == userData['birthday']:
+    elif "1970-01-01" == userData['birthday']:
         await Registration.REG_BITRH.set()
         await bot.send_message(usertgid, birthday_text)
         return
@@ -74,6 +73,8 @@ async def state_reg(usertgid,data):
         await bot.send_message(usertgid, photo_text)
         return
     else:
+
+        await bot.send_message(usertgid,finished_reg_text,reply_markup=MAIN_KB)
         return True
 
 
@@ -82,7 +83,7 @@ async def get_btns_param(userData,param):
     data_list = []
     groups = requestsApi.getgroups()
     for i in range(1, len(groups)):
-        if curgroup == groups[i]['fond']:
+        if curgroup == groups[i]['fond'] or curgroup == "mentor" or curgroup == "cofounder" or curgroup == "team":
             parametr = groups[i][param]
             tulist = (parametr, "fond"+param+"_" + parametr)
             if tulist not in data_list:

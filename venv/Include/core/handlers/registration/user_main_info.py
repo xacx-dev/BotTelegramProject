@@ -1,15 +1,14 @@
 from aiogram import types
 from config import dp,bot,req_url
 from aiogram.dispatcher import FSMContext
-from Include.core.states import Registration
+from Include.core.states import Registration, UserProfileEdit
 from Include.core.helpers import requestsApi
 from .CheckRegData import *
 from .messages import *
 import time
 import re
-import requests
 
-@dp.message_handler(lambda message: message.text, state=Registration.REG_LASTNAME, content_types=types.ContentTypes.TEXT)
+@dp.message_handler(lambda message: message.text, state=Registration.REG_LASTNAME,content_types=types.ContentTypes.TEXT)
 async def last_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         requestsApi.update(message.from_user.id,"last_name",message.text)
@@ -53,8 +52,8 @@ async def vk(message: types.Message, state: FSMContext):
         if (requestsApi.check_vk_url(message.text)):
             requestsApi.update(message.from_user.id, "vk", message.text)
             await state_reg(message.from_user.id, data)
-        elif message.text != "нету":
-            requestsApi.update(message.from_user.id, "нету", message.text)
+        elif message.text != "нет":
+            requestsApi.update(message.from_user.id, "нет", message.text)
             await state_reg(message.from_user.id, data)
         else:
             await bot.send_message(message.from_user.id, vk_error)
@@ -63,7 +62,7 @@ async def vk(message: types.Message, state: FSMContext):
 async def fb(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         message.text = str(message.text).lower()
-        if message.text == "нету":
+        if message.text == "нет":
             requestsApi.update(message.from_user.id, "fb", message.text)
             await state_reg(message.from_user.id, data)
         else:
@@ -106,7 +105,8 @@ async def reg_photo(message: types.Message, state: FSMContext):
         file = await bot.get_file(photo_id)
         file_path = file.file_path
         await bot.download_file(file_path, "./core/media/photo/"+str(message.from_user.id)+"__"+str(photo_id)+".png")
-
+        await state.finish()
+        await bot.send_message(message.from_user.id,finish_txt,reply_markup=MAIN_KB)
 
 @dp.callback_query_handler(lambda c: str(c.data).split("_")[0].__eq__("fond"),state=Registration.REG_GROUP)
 async def group(callback_query: types.CallbackQuery, state: FSMContext):
