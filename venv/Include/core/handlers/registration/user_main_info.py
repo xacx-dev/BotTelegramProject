@@ -8,6 +8,15 @@ from .messages import *
 import time
 import re
 
+@dp.callback_query_handler(text='yes_reg',state="*")
+async def process_callback_authbtn(callback_query: types.CallbackQuery):
+    #await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, "Введите пароль")
+    await Registration.REG_PASS.set()
+
+
+
+
 @dp.message_handler(lambda message: message.text, state=Registration.REG_LASTNAME,content_types=types.ContentTypes.TEXT)
 async def last_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:

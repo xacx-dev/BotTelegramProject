@@ -1,6 +1,14 @@
 from aiogram import types
 from core.helpers import telegram as tg_helper
 
+chats_msg = 'Ты бы хотел узнавать актуальную информацию о мероприятиях Фонда?'
+chats = {
+    ("Хочу всё знать!", "chat_1"),
+    ("Я уже знаю.", "chat_2")
+}
+
+chats2 = tg_helper.create_inline_markup(*chats)
+
 chat1_msg = 'Выбирай образовательную программу или же вечеринки for fun, а лучше все вместе - ведь в жизни должен быть баланс!'
 chat1 = {
     ("Вечеринки", 'https://t.me/joinchat/HbPRcBcoCX0iUmXHWJ7xyg'),

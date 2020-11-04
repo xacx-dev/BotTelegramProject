@@ -8,6 +8,21 @@ edit_finish = "Редактирование завершено!"
 date_error = '<b>Ошибка!</b>\n\nУкажите дату повтороно\nПример: 2020-01-01 '
 
 
+user_profile_text = 'В данном меню, вы можете работать со свои профилем'
+user_profile = {
+
+    ("О проекте", "userprofile_project"),
+    ("О учебе", "userprofile_study"),
+
+    ("О работе", "userprofile_work"),
+    ("О интересах", "userprofile_hobby"),
+
+    ("О компетенции", "userprofile_competence"),
+    ("Изменить информацию", "userprofile_edit")
+}
+
+user_profile_btn = tg_helper.create_inline_markup(*user_profile)
+
 #-----------------competence--------------------------#
 competence_msg = 'Управление вашими компетенциями'
 competence_text_1 = 'Выберите компетенцию, которую хотите добавить'

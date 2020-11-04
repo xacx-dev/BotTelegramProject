@@ -27,6 +27,38 @@ def check_pass(user_pass,tgid):
 def getuser(userid):
     data = requests.get(req_url + "/user/"+ str(userid)).json()
     return data
+
+#----------------finder-----------------#
+def find_user_lastname(last_name):
+    data = requests.get(req_url + "/user/search/ln/"+ str(last_name)).json()
+    if data == []:
+        return False
+    else:
+        return data
+def find_user_tg(telegram_id):
+    data = requests.get(req_url + "/user/search/tg/"+ str(telegram_id)).json()
+    if data == []:
+        return False
+    else:
+        return data
+def find_user_vk(vk_id):
+    data = requests.get(req_url + "/user/search/vk/"+ str(telegram_id)).json()
+    if data == []:
+        return False
+    else:
+        return data
+
+def find_user_fb(vk_id):
+    data = requests.get(req_url + "/user/search/fb/"+ str(telegram_id)).json()
+    if data == []:
+        return False
+    else:
+        return data
+
+#----------------------------------------#
+
+
+
 #----------------------------------------#
 #study
 def get_user_study(tgid):
@@ -108,6 +140,7 @@ def remove_competence_foruser(tgid,hashtag):
     data = requests.delete(req_url + "/competence/"+ str(tgid)+"/"+str(token)+"/"+str(hashtag)).json()
     return data
 #----------------------------------------#
+
 def getUserData(tgid):
     token = gettoken(tgid)
     userData = getuser(token['id'])
