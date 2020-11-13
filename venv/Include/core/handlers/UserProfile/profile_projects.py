@@ -143,7 +143,7 @@ async def status_project(callback_query: types.CallbackQuery, state: FSMContext)
             data['investitions'] = 0
             data['investitionsinfo'] = 0
             create_project_send(data, callback_query)
-            await bot.send_message(callback_query.from_user.id, project_text_10+"\n"+project_msg+"\n"+get_project_info(message.from_user.id), reply_markup=projects_btn)
+            await bot.send_message(callback_query.from_user.id, project_text_10+"\n"+project_msg+"\n"+get_project_info(callback_query.from_user.id), reply_markup=projects_btn)
 
 
 @dp.message_handler(lambda message: str(message.text).isdigit(), state=AddProject.InvestetionInfo,content_types=types.ContentTypes.TEXT)

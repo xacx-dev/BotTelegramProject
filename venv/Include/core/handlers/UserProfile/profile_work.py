@@ -82,7 +82,7 @@ async def startdate_project(message: types.Message, state: FSMContext):
             if data['statuswork']:
                 data['enddata'] = "1970-01-01"
                 create_work_send(data,message)
-                state.finish()
+                await state.finish()
 
             else:
                 await bot.send_message(message.from_user.id, project_text_6)

@@ -20,7 +20,7 @@ async def state_reg(usertgid,data):
         await Registration.REG_FIRSTNAME.set()
         await bot.send_message(usertgid, first_name_txt)
         return
-    elif userData['group'] == "awaiting":
+    elif "fond" not in data and  userData['group'] == "awaiting" :
         await Registration.REG_GROUP.set()
         groups_list = []
         groups = requestsApi.getgroups()
@@ -35,16 +35,16 @@ async def state_reg(usertgid,data):
         btns = tg_helper.create_inline_markup(*groups_list,row_width=1)
         await bot.send_message(usertgid, group_text, reply_markup=btns)
         return
-    elif userData['city'] == "awaiting":
+    elif "city" not in data and userData['city'] == "awaiting":
         await Registration.REG_CITY.set()
 
-        btns = await get_btns_param(userData, "city")
+        btns = await get_btns_param(userData, "city",data)
         await bot.send_message(usertgid, city_where, reply_markup=btns)
 
         return
     elif "1970-01-01" == userData['startdate']:
         await Registration.REG_YEARENTER.set()
-        btns = await get_btns_param(userData,"year")
+        btns = await get_btns_param(userData,"year",data)
         await bot.send_message(usertgid, year_join, reply_markup=btns)
 
         return
@@ -78,11 +78,11 @@ async def state_reg(usertgid,data):
         return True
 
 
-async def get_btns_param(userData,param):
-    curgroup = userData['group']
+async def get_btns_param(userData,param,data):
+    curgroup = data['fond']
     data_list = []
     groups = requestsApi.getgroups()
-    for i in range(1, len(groups)):
+    for i in range(0, len(groups)):
         if curgroup == groups[i]['fond'] or curgroup == "mentor" or curgroup == "cofounder" or curgroup == "team":
             parametr = groups[i][param]
             tulist = (parametr, "fond"+param+"_" + parametr)

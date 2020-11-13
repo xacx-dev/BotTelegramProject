@@ -6,6 +6,7 @@ from .registration import user_main_info
 from .chats import inline_kb_handler
 
 from .Finder import finder_handler
+from .Finder import LN_finder
 
 from .UserProfile import UserProfile_handler
 from .UserProfile import profile_competence

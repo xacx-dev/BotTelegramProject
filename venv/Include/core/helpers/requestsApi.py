@@ -3,9 +3,7 @@ import requests
 from config import *
 
 
-def finduser_lastname(lastname):
-    data = requests.get(req_url + "/user/search/ln"+ str(lastname)).json()
-    return data
+
 
 def check_vk_url(url):
     id = str(url).split("/")[len(str(url).split("/"))-1]
@@ -27,7 +25,9 @@ def check_pass(user_pass,tgid):
 def getuser(userid):
     data = requests.get(req_url + "/user/"+ str(userid)).json()
     return data
-
+def getusers_in_group(group_id):
+    data = requests.get(req_url + "/user/group/" + str(group_id)).json()
+    return data
 #----------------finder-----------------#
 def find_user_lastname(last_name):
     data = requests.get(req_url + "/user/search/ln/"+ str(last_name)).json()

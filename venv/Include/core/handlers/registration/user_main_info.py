@@ -20,6 +20,7 @@ async def process_callback_authbtn(callback_query: types.CallbackQuery):
 @dp.message_handler(lambda message: message.text, state=Registration.REG_LASTNAME,content_types=types.ContentTypes.TEXT)
 async def last_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
+        message.text = str(message.text).lower().title()
         requestsApi.update(message.from_user.id,"last_name",message.text)
         await state_reg(message.from_user.id,data)
 
@@ -28,6 +29,7 @@ async def last_name(message: types.Message, state: FSMContext):
 @dp.message_handler(state=Registration.REG_FIRSTNAME, content_types=types.ContentTypes.TEXT)
 async def first_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
+        message.text = str(message.text).lower().title()
         requestsApi.update(message.from_user.id, "first_name", message.text)
         await state_reg(message.from_user.id, data)
 
@@ -42,7 +44,7 @@ async def daymonthenter(message: types.Message, state: FSMContext):
             valid_date = time.strptime(date, '%Y-%m-%d')
             requestsApi.update(message.from_user.id,"startdate",date)
             await state_reg(message.from_user.id, data)
-        except ValueError:
+        except (ValueError,IndexError):
             await bot.send_message(message.from_user.id, date_error)
 
 @dp.message_handler(state=Registration.REG_EMAIL, content_types=types.ContentTypes.TEXT)
@@ -58,11 +60,12 @@ async def email_check(message: types.Message, state: FSMContext):
 @dp.message_handler(state=Registration.REG_VK, content_types=types.ContentTypes.TEXT)
 async def vk(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if (requestsApi.check_vk_url(message.text)):
+        message.text = str(message.text).lower()
+        if message.text == "нет":
             requestsApi.update(message.from_user.id, "vk", message.text)
             await state_reg(message.from_user.id, data)
-        elif message.text != "нет":
-            requestsApi.update(message.from_user.id, "нет", message.text)
+        elif (requestsApi.check_vk_url(message.text)):
+            requestsApi.update(message.from_user.id, "vk", message.text)
             await state_reg(message.from_user.id, data)
         else:
             await bot.send_message(message.from_user.id, vk_error)
@@ -103,32 +106,37 @@ async def birthday_check(message: types.Message, state: FSMContext):
             valid_date = time.strptime(date, '%Y-%m-%d')
             requestsApi.update(message.from_user.id,"birthday",date)
             await state_reg(message.from_user.id, data)
-        except ValueError:
+        except (ValueError,IndexError):
             await bot.send_message(message.from_user.id, date_error)
 
 
-@dp.message_handler(state=Registration.REG_PHOTO, content_types=['photo'])
+@dp.message_handler(state=Registration.REG_PHOTO, content_types=['photo','document'])
 async def reg_photo(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        photo_id = message.photo[1].file_id
-        file = await bot.get_file(photo_id)
-        file_path = file.file_path
-        await bot.download_file(file_path, "./core/media/photo/"+str(message.from_user.id)+"__"+str(photo_id)+".png")
-        await state.finish()
-        await bot.send_message(message.from_user.id,finish_txt,reply_markup=MAIN_KB)
+        if(message.content_type == "photo"):
+            photo_id = message.photo[1].file_id
+            file = await bot.get_file(photo_id)
+            file_path = file.file_path
+            await bot.download_file(file_path, "./core/media/photo/"+str(message.from_user.id)+"__"+str(photo_id)+".png")
+            await state.finish()
+            await bot.send_message(message.from_user.id, finish_txt, reply_markup=MAIN_KB)
+        elif(message.content_type == 'document'):
+            await bot.send_message(message.from_user.id,photo_doc_err)
+
 
 @dp.callback_query_handler(lambda c: str(c.data).split("_")[0].__eq__("fond"),state=Registration.REG_GROUP)
 async def group(callback_query: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         fond = str(callback_query.data).split("_")[1]
-        requestsApi.update(callback_query.from_user.id, "group", fond)
+        data['fond'] = fond
         await state_reg(callback_query.from_user.id, data)
 
 @dp.callback_query_handler(lambda c: str(c.data).split("_")[0].__eq__("fondcity"),state=Registration.REG_CITY)
 async def city(callback_query: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
-        fond = str(callback_query.data).split("_")[1]
-        requestsApi.update(callback_query.from_user.id, "city", fond)
+        city = str(callback_query.data).split("_")[1]
+        data['city'] = city
+
         await state_reg(callback_query.from_user.id, data)
 
 @dp.callback_query_handler(lambda c: str(c.data).split("_")[0].__eq__("fondyear"),state=Registration.REG_YEARENTER)
@@ -136,6 +144,14 @@ async def year(callback_query: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         year = str(callback_query.data).split("_")[1]
         data['year'] = year
+        requestsApi.update(callback_query.from_user.id, "city", data['city'])
+        requestsApi.update(callback_query.from_user.id, "group", data['fond'])
+        groups = requestsApi.getgroups()
+        for i in range(0, len(groups)):
+            group = groups[i]
+            if group['city'] == data['city'] and group['year'] == data['year'] and group['fond'] == data['fond']:
+                 requestsApi.update(callback_query.from_user.id, "group", group['group_id'])
+
         await bot.send_message(callback_query.from_user.id, date_example)
         await Registration.next()
 

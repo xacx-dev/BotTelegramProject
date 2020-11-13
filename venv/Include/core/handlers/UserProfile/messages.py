@@ -2,29 +2,30 @@ from .helper import *
 from aiogram import types
 from core.helpers import telegram as tg_helper
 
-edit_addon = "\nЕсли не хотите ничего менять отправте 0"
+edit_addon = '\nЕсли не хотите ничего менять - отправьте "0"'
 edit_finish = "Редактирование завершено!"
 
 date_error = '<b>Ошибка!</b>\n\nУкажите дату повтороно\nПример: 2020-01-01 '
 
 
-user_profile_text = 'В данном меню, вы можете работать со свои профилем'
+user_profile_text = 'В данном меню Вы можете работать со своим профилем'
 user_profile = {
 
-    ("О проекте", "userprofile_project"),
-    ("О учебе", "userprofile_study"),
+    ("Проект", "userprofile_project"),
+    ("Учёба", "userprofile_study"),
 
-    ("О работе", "userprofile_work"),
-    ("О интересах", "userprofile_hobby"),
+    ("Работа", "userprofile_work"),
+    ("Интересы", "userprofile_hobby"),
 
-    ("О компетенции", "userprofile_competence"),
-    ("Изменить информацию", "userprofile_edit")
+    ("Компетенции", "userprofile_competence"),
+    ("Редактировать профиль", "userprofile_edit")
 }
 
 user_profile_btn = tg_helper.create_inline_markup(*user_profile)
 
 #-----------------competence--------------------------#
 competence_msg = 'Управление вашими компетенциями'
+competence_msg_info = 'Компетенции пользователя'
 competence_text_1 = 'Выберите компетенцию, которую хотите добавить'
 competence_text_2 = 'Выберите компетенцию, которую хотите удалить'
 competence_text_3 = 'Компетенция удалена'
@@ -39,7 +40,7 @@ def get_competence_info(tgid):
     competence_data = getcompetences(tgid)
     main_text = []
     id = 0
-    main_text.append("Ваши Компетенции:")
+    main_text.append("Компетенции:")
     for i in competence_data:
         id += 1
         main_text.append('  {}. #{}'.format(str(id),i['hashtag']))
@@ -53,6 +54,7 @@ def get_competence_info(tgid):
 
 #-----------------hobby--------------------------#
 hobby_msg = 'Управление вашими интересами'
+hobby_msg_info = 'Интересы пользователя'
 hobby_text_1 = 'Выберите интерес, который хотите добавить'
 hobby_text_2 = 'Выберите интерес, который хотите удалить'
 hobby_text_3 = 'Интерес удален'
@@ -67,7 +69,7 @@ def get_hobby_info(tgid):
     hobby_data = gethobby(tgid)
     main_text = []
     id = 0
-    main_text.append("Ваши интересы:")
+    main_text.append("Интересы:")
     for i in hobby_data:
         id += 1
         main_text.append('  {}. #{}'.format(str(id),i['hashtag']))
@@ -81,23 +83,24 @@ def get_hobby_info(tgid):
 
 #-----------------study--------------------------#
 study = {
-    ("Добавить учёбу", "add_study"),
-    ("Удалить учёбу", "remove_study"),
+    ("Добавить образование", "add_study"),
+    ("Удалить образование", "remove_study"),
     ("Предыдущее окно","back")
 }
 study_btn = tg_helper.create_inline_markup(*study)
-study_msg = 'Информация о вашей учебе'
+study_msg = 'Информация о вашем образовании'
+study_msg_info = 'Информация о образовании пользователя'
 type_study = {
     ("Школьник", "typestudy_sch"),
-    ("(Вуз) Бакалавриат", "typestudy_bkl"),
-    ("(Вуз) Магистратура", "typestudy_mag"),
-    ("(Вуз) Кандидат наук", "typestudy_kad"),
-    ("(Вуз) Доктор наук", "typestudy_doc"),
+    ("(ВУЗ) Бакалавриат", "typestudy_bkl"),
+    ("(ВУЗ) Магистратура", "typestudy_mag"),
+    ("(ВУЗ) Кандидат наук", "typestudy_kad"),
+    ("(ВУЗ) Доктор наук", "typestudy_doc"),
 }
 type_study_btn = tg_helper.create_inline_markup(*type_study)
 
-study_text_1 = 'Тип вашего обучения ВУЗ/Школа'
-study_text_2 = 'Введите Место обучения'
+study_text_1 = 'Тип вашего образования: ВУЗ/Школа'
+study_text_2 = 'Отправьте место обучения'
 study_text_3 = 'Ваш статус'
 state_study = {
     ("Учился", "studystatus_finished"),
@@ -105,15 +108,15 @@ state_study = {
 }
 state_study_btn = tg_helper.create_inline_markup(*state_study)
 
-study_text_4 = 'Введите Ваш класс'
-study_text_5 = 'Введите Ваш курс'
-study_text_6 = 'Введите вашу специальность'
+study_text_4 = 'Отправьте Ваш класс'
+study_text_5 = 'Отправьте Ваш курс'
+study_text_6 = 'Отправьте вашу специальность'
 
 study_error_sch = 'Неправильный номер класса, введите число от 8 до 11'
 study_error_vuz = 'Неправильный номер курса, введите число от 1 до 7'
 
-study_added = 'Учеба добавлена'
-study_deleted = 'Учеба удалена'
+study_added = 'Образование добавлена'
+study_deleted = 'Образование удалена'
 def get_study_info(tgid):
     study_data = getstudy(tgid)
     main_text = []
@@ -123,24 +126,24 @@ def get_study_info(tgid):
         if i['type'] == "sch":
             main_text.append('{}. Тип: {}'.format(str(id),"Школа"))
         elif i['type'] == "bkl":
-            main_text.append('{}. Тип: {}'.format(str(id), "(Вуз) Бакалавриат"))
+            main_text.append('{}. Тип: {}'.format(str(id), "(ВУЗ) Бакалавриат"))
         elif i['type'] == "mag":
-            main_text.append('{}. Тип: {}'.format(str(id), "(Вуз) Магистратура"))
+            main_text.append('{}. Тип: {}'.format(str(id), "(ВУЗ) Магистратура"))
         elif i['type'] == "kad":
-            main_text.append('{}. Тип: {}'.format(str(id), "(Вуз) Кандидат наук"))
+            main_text.append('{}. Тип: {}'.format(str(id), "(ВУЗ) Кандидат наук"))
         elif i['type'] == "doc":
-            main_text.append('{}. Тип: {}'.format(str(id), "(Вуз) Доктор наук"))
+            main_text.append('{}. Тип: {}'.format(str(id), "(ВУЗ) Доктор наук"))
 
         main_text.append('Название: {}'.format(i['name']))
 
         if not i['status']:
             if i['type'] == "sch":
                 main_text.append('Класс: {}'.format(i['step']))
-                main_text.append('Статус: учусь')
+                main_text.append('Статус: обучаюсь')
             else:
                 main_text.append('Курс: {}'.format(i['step']))
                 main_text.append('Специальность: {}'.format(i['speciality']))
-                main_text.append('Статус: учусь')
+                main_text.append('Статус: обучаюсь')
         else:
             if i['type'] == "sch":
                 main_text.append('Класс: {}'.format(i['step']))
@@ -168,17 +171,18 @@ works = {
     ("Предыдущее окно","back")
 }
 works_btn = tg_helper.create_inline_markup(*works)
-work_msg = 'Информация о ваших работах'
-work_text_1 = 'Введите Название вашей работы\\организации'
-work_text_2 = 'Введите вашу должность'
+work_msg = 'Информация о вашей работе'
+work_msg_info = 'Информация о работе пользователя'
+work_text_1 = 'Отправьте наименование вашей организации\\места работы'
+work_text_2 = 'Отправьте вашу должность'
 work_text_3 = 'Ваш статус'
 state_work = {
     ("Ушел с работы", "workstatus_finished"),
     ("Работаю", "workstatus_inprogress")
 }
 state_work_btn = tg_helper.create_inline_markup(*state_work)
-work_text_4 = 'Когда начали работать\nВведите дату в формате 2020-01-01'
-work_text_5 = 'Когда закончили работать\nВведите дату в формате 2020-01-01'
+work_text_4 = 'Когда начали работать?\nВведите дату в формате 2020-01-01'
+work_text_5 = 'Когда закончили работать?\nВведите дату в формате 2020-01-01'
 work_deleted = 'Работа удалена'
 def get_works_info(tgid):
     works_data = getworks(tgid)
@@ -189,7 +193,7 @@ def get_works_info(tgid):
         main_text.append('{}. Название: {}'.format(str(id),i['name']))
         main_text.append('Должность: {}'.format(i['position']))
         if i['status']:
-            main_text.append('Статус: работую')
+            main_text.append('Статус: работаю')
             main_text.append('Дата начала: {}'.format(i['startdate']))
         else:
             main_text.append('Статус: ушел с работы')
@@ -208,9 +212,10 @@ def get_works_info(tgid):
 
 #----------------PROJECT-----------------------#
 project_msg = 'Информация о ваших проектах'
+project_msg_info = 'Информация о проектах пользователя'
 project_deleted = 'Проект удален'
-project_text_1 = 'Введите Название проекта'
-project_text_2 = 'Введите описание проекта'
+project_text_1 = 'Отправьте название проекта'
+project_text_2 = 'Отправьте описание проекта'
 project_text_3 = 'Выберите статус проекта'
 state_project = {
     ("Завершен", "projectstatus_finished"),
@@ -225,14 +230,14 @@ grant_project = {
     ("Нет", "projectgrant_no")
 }
 grant_project_btn = tg_helper.create_inline_markup(*grant_project)
-project_text_7 = 'От кого вы получили поддержку'
+project_text_7 = 'От кого вы получили поддержку?'
 project_text_8 = 'Нужны ли инвестиции?'
 invest_project = {
     ("Да", "projectinvestition_yes"),
     ("Нет", "projectinvestition_no")
 }
 invest_btn = tg_helper.create_inline_markup(*invest_project)
-project_text_9 = 'Какая вам нужна сумма для поддержки (число в долларах)'
+project_text_9 = 'Какая вам нужна сумма для поддержки (число в долларах)?'
 project_text_10 = 'Проект добавлен!'
 projects = {
     ("Добавить проект", "add_project"),
@@ -259,7 +264,7 @@ def get_project_info(tgid):
         if i['investor']:
             main_text.append('Информация о инвесторах: {}'.format(i['investor']))
         if i['investneedsum']:
-            main_text.append('Нужная сумма инвестиции: {}'.format(i['investneedsum']))
+            main_text.append('Нужная сумма инвестиций: {}'.format(i['investneedsum']))
         main_text.append("")
 
     fin_text=''
@@ -275,6 +280,11 @@ def get_project_info(tgid):
 def main_data(tgid):
     main_text = []
     main_data = getdata(tgid)
+    groups = requestsApi.getgroups()
+    for i in range(0, len(groups)):
+        if groups[i]['group_id'] == main_data['group']:
+            main_data['group'] = groups[i]['fond']
+            break
     study_data = getstudy(tgid)
     work_data = getworks(tgid)
     hobby_data = gethobby(tgid)
